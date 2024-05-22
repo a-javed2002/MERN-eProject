@@ -2,228 +2,144 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 const MyHeader = () => {
-  const handleLogout = () => {
-    // Remove token from local storage or cookies
-    localStorage.removeItem('token'); // or document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  
-    // Optionally, make a request to the server to handle any server-side logout logic
-    fetch('http://localhost:8080/api/v1/auth/logout', {
-      method: 'POST',
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        // Redirect to login page or home page
-        window.location.href = '/login';
-      }
-    })
-    .catch(error => {
-      console.error('Error logging out:', error);
-    });
-  };
   
   return (
     <>
-     {/*header start*/}
-<header className="header black-bg">
-  <div className="sidebar-toggle-box">
-    <div className="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation" />
-  </div>
-  {/*logo start*/}
-  <a href="index.html" className="logo"><b>DASH<span>IO</span></b></a>
-  {/*logo end*/}
-  <div className="nav notify-row" id="top_menu">
-    {/*  notification start */}
-    <ul className="nav top-menu">
-      {/* settings start */}
-      <li className="dropdown">
-        <a data-toggle="dropdown" className="dropdown-toggle" href="index.html#">
-          <i className="fa fa-tasks" />
-          <span className="badge bg-theme">4</span>
+      {/* Navbar */}
+<nav className="main-header navbar navbar-expand navbar-white navbar-light">
+  {/* Left navbar links */}
+  <ul className="navbar-nav">
+    <li className="nav-item">
+      <a className="nav-link" data-widget="pushmenu" href="#" role="button"><i className="fas fa-bars" /></a>
+    </li>
+    <li className="nav-item d-none d-sm-inline-block">
+      <a href="index3.html" className="nav-link">Home</a>
+    </li>
+    <li className="nav-item d-none d-sm-inline-block">
+      <a href="#" className="nav-link">Contact</a>
+    </li>
+  </ul>
+  {/* Right navbar links */}
+  <ul className="navbar-nav ml-auto">
+    {/* Navbar Search */}
+    <li className="nav-item">
+      <a className="nav-link" data-widget="navbar-search" href="#" role="button">
+        <i className="fas fa-search" />
+      </a>
+      <div className="navbar-search-block">
+        <form className="form-inline">
+          <div className="input-group input-group-sm">
+            <input className="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search" />
+            <div className="input-group-append">
+              <button className="btn btn-navbar" type="submit">
+                <i className="fas fa-search" />
+              </button>
+              <button className="btn btn-navbar" type="button" data-widget="navbar-search">
+                <i className="fas fa-times" />
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </li>
+    {/* Messages Dropdown Menu */}
+    <li className="nav-item dropdown">
+      <a className="nav-link" data-toggle="dropdown" href="#">
+        <i className="far fa-comments" />
+        <span className="badge badge-danger navbar-badge">3</span>
+      </a>
+      <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <a href="#" className="dropdown-item">
+          {/* Message Start */}
+          <div className="media">
+            <img src="dist/img/user1-128x128.jpg" alt="User Avatar" className="img-size-50 mr-3 img-circle" />
+            <div className="media-body">
+              <h3 className="dropdown-item-title">
+                Brad Diesel
+                <span className="float-right text-sm text-danger"><i className="fas fa-star" /></span>
+              </h3>
+              <p className="text-sm">Call me whenever you can...</p>
+              <p className="text-sm text-muted"><i className="far fa-clock mr-1" /> 4 Hours Ago</p>
+            </div>
+          </div>
+          {/* Message End */}
         </a>
-        <ul className="dropdown-menu extended tasks-bar">
-          <div className="notify-arrow notify-arrow-green" />
-          <li>
-            <p className="green">You have 4 pending tasks</p>
-          </li>
-          <li>
-            <a href="index.html#">
-              <div className="task-info">
-                <div className="desc">Dashio Admin Panel</div>
-                <div className="percent">40%</div>
-              </div>
-              <div className="progress progress-striped">
-                <div className="progress-bar progress-bar-success" role="progressbar" aria-valuenow={40} aria-valuemin={0} aria-valuemax={100} style={{width: '40%'}}>
-                  <span className="sr-only">40% Complete (success)</span>
-                </div>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="index.html#">
-              <div className="task-info">
-                <div className="desc">Database Update</div>
-                <div className="percent">60%</div>
-              </div>
-              <div className="progress progress-striped">
-                <div className="progress-bar progress-bar-warning" role="progressbar" aria-valuenow={60} aria-valuemin={0} aria-valuemax={100} style={{width: '60%'}}>
-                  <span className="sr-only">60% Complete (warning)</span>
-                </div>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="index.html#">
-              <div className="task-info">
-                <div className="desc">Product Development</div>
-                <div className="percent">80%</div>
-              </div>
-              <div className="progress progress-striped">
-                <div className="progress-bar progress-bar-info" role="progressbar" aria-valuenow={80} aria-valuemin={0} aria-valuemax={100} style={{width: '80%'}}>
-                  <span className="sr-only">80% Complete</span>
-                </div>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="index.html#">
-              <div className="task-info">
-                <div className="desc">Payments Sent</div>
-                <div className="percent">70%</div>
-              </div>
-              <div className="progress progress-striped">
-                <div className="progress-bar progress-bar-danger" role="progressbar" aria-valuenow={70} aria-valuemin={0} aria-valuemax={100} style={{width: '70%'}}>
-                  <span className="sr-only">70% Complete (Important)</span>
-                </div>
-              </div>
-            </a>
-          </li>
-          <li className="external">
-            <a href="#">See All Tasks</a>
-          </li>
-        </ul>
-      </li>
-      {/* settings end */}
-      {/* inbox dropdown start*/}
-      <li id="header_inbox_bar" className="dropdown">
-        <a data-toggle="dropdown" className="dropdown-toggle" href="index.html#">
-          <i className="fa fa-envelope-o" />
-          <span className="badge bg-theme">5</span>
+        <div className="dropdown-divider" />
+        <a href="#" className="dropdown-item">
+          {/* Message Start */}
+          <div className="media">
+            <img src="dist/img/user8-128x128.jpg" alt="User Avatar" className="img-size-50 img-circle mr-3" />
+            <div className="media-body">
+              <h3 className="dropdown-item-title">
+                John Pierce
+                <span className="float-right text-sm text-muted"><i className="fas fa-star" /></span>
+              </h3>
+              <p className="text-sm">I got your message bro</p>
+              <p className="text-sm text-muted"><i className="far fa-clock mr-1" /> 4 Hours Ago</p>
+            </div>
+          </div>
+          {/* Message End */}
         </a>
-        <ul className="dropdown-menu extended inbox">
-          <div className="notify-arrow notify-arrow-green" />
-          <li>
-            <p className="green">You have 5 new messages</p>
-          </li>
-          <li>
-            <a href="index.html#">
-              <span className="photo"><img alt="avatar" src="img/ui-zac.jpg" /></span>
-              <span className="subject">
-                <span className="from">Zac Snider</span>
-                <span className="time">Just now</span>
-              </span>
-              <span className="message">
-                Hi mate, how is everything?
-              </span>
-            </a>
-          </li>
-          <li>
-            <a href="index.html#">
-              <span className="photo"><img alt="avatar" src="img/ui-divya.jpg" /></span>
-              <span className="subject">
-                <span className="from">Divya Manian</span>
-                <span className="time">40 mins.</span>
-              </span>
-              <span className="message">
-                Hi, I need your help with this.
-              </span>
-            </a>
-          </li>
-          <li>
-            <a href="index.html#">
-              <span className="photo"><img alt="avatar" src="img/ui-danro.jpg" /></span>
-              <span className="subject">
-                <span className="from">Dan Rogers</span>
-                <span className="time">2 hrs.</span>
-              </span>
-              <span className="message">
-                Love your new Dashboard.
-              </span>
-            </a>
-          </li>
-          <li>
-            <a href="index.html#">
-              <span className="photo"><img alt="avatar" src="img/ui-sherman.jpg" /></span>
-              <span className="subject">
-                <span className="from">Dj Sherman</span>
-                <span className="time">4 hrs.</span>
-              </span>
-              <span className="message">
-                Please, answer asap.
-              </span>
-            </a>
-          </li>
-          <li>
-            <a href="index.html#">See all messages</a>
-          </li>
-        </ul>
-      </li>
-      {/* inbox dropdown end */}
-      {/* notification dropdown start*/}
-      <li id="header_notification_bar" className="dropdown">
-        <a data-toggle="dropdown" className="dropdown-toggle" href="index.html#">
-          <i className="fa fa-bell-o" />
-          <span className="badge bg-warning">7</span>
+        <div className="dropdown-divider" />
+        <a href="#" className="dropdown-item">
+          {/* Message Start */}
+          <div className="media">
+            <img src="dist/img/user3-128x128.jpg" alt="User Avatar" className="img-size-50 img-circle mr-3" />
+            <div className="media-body">
+              <h3 className="dropdown-item-title">
+                Nora Silvester
+                <span className="float-right text-sm text-warning"><i className="fas fa-star" /></span>
+              </h3>
+              <p className="text-sm">The subject goes here</p>
+              <p className="text-sm text-muted"><i className="far fa-clock mr-1" /> 4 Hours Ago</p>
+            </div>
+          </div>
+          {/* Message End */}
         </a>
-        <ul className="dropdown-menu extended notification">
-          <div className="notify-arrow notify-arrow-yellow" />
-          <li>
-            <p className="yellow">You have 7 new notifications</p>
-          </li>
-          <li>
-            <a href="index.html#">
-              <span className="label label-danger"><i className="fa fa-bolt" /></span>
-              Server Overloaded.
-              <span className="small italic">4 mins.</span>
-            </a>
-          </li>
-          <li>
-            <a href="index.html#">
-              <span className="label label-warning"><i className="fa fa-bell" /></span>
-              Memory #2 Not Responding.
-              <span className="small italic">30 mins.</span>
-            </a>
-          </li>
-          <li>
-            <a href="index.html#">
-              <span className="label label-danger"><i className="fa fa-bolt" /></span>
-              Disk Space Reached 85%.
-              <span className="small italic">2 hrs.</span>
-            </a>
-          </li>
-          <li>
-            <a href="index.html#">
-              <span className="label label-success"><i className="fa fa-plus" /></span>
-              New User Registered.
-              <span className="small italic">3 hrs.</span>
-            </a>
-          </li>
-          <li>
-            <a href="index.html#">See all notifications</a>
-          </li>
-        </ul>
-      </li>
-      {/* notification dropdown end */}
-    </ul>
-    {/*  notification end */}
-  </div>
-  <div className="top-menu" onClick={handleLogout}>
-    <ul className="nav pull-right top-menu">
-      <li><a className="logout" href="login.html">Logout</a></li>
-    </ul>
-  </div>
-</header>
-{/*header end*/}
+        <div className="dropdown-divider" />
+        <a href="#" className="dropdown-item dropdown-footer">See All Messages</a>
+      </div>
+    </li>
+    {/* Notifications Dropdown Menu */}
+    <li className="nav-item dropdown">
+      <a className="nav-link" data-toggle="dropdown" href="#">
+        <i className="far fa-bell" />
+        <span className="badge badge-warning navbar-badge">15</span>
+      </a>
+      <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <span className="dropdown-item dropdown-header">15 Notifications</span>
+        <div className="dropdown-divider" />
+        <a href="#" className="dropdown-item">
+          <i className="fas fa-envelope mr-2" /> 4 new messages
+          <span className="float-right text-muted text-sm">3 mins</span>
+        </a>
+        <div className="dropdown-divider" />
+        <a href="#" className="dropdown-item">
+          <i className="fas fa-users mr-2" /> 8 friend requests
+          <span className="float-right text-muted text-sm">12 hours</span>
+        </a>
+        <div className="dropdown-divider" />
+        <a href="#" className="dropdown-item">
+          <i className="fas fa-file mr-2" /> 3 new reports
+          <span className="float-right text-muted text-sm">2 days</span>
+        </a>
+        <div className="dropdown-divider" />
+        <a href="#" className="dropdown-item dropdown-footer">See All Notifications</a>
+      </div>
+    </li>
+    <li className="nav-item">
+      <a className="nav-link" data-widget="fullscreen" href="#" role="button">
+        <i className="fas fa-expand-arrows-alt" />
+      </a>
+    </li>
+    <li className="nav-item">
+      <a className="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#" role="button">
+        <i className="fas fa-th-large" />
+      </a>
+    </li>
+  </ul>
+</nav>
+{/* /.navbar */}
 
     </>
   );

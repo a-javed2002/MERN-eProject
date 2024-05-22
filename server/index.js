@@ -5,6 +5,13 @@ import connectDB from './config/db.js';
 import morgan from 'morgan';
 import authRoutes from './routes/authRouter.js';
 import cors from 'cors';
+import userRoutes from './routes/userRoutes.js';
+import workoutRoutes from './routes/workoutRoutes.js';
+import nutritionLogRoutes from './routes/nutritionLogRoutes.js';
+import progressLogRoutes from './routes/progressLogRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
+import preferenceRoutes from './routes/preferenceRoutes.js';
+import supportRoutes from './routes/supportRoutes.js';
 
 //configure env
 dotenv.config();
@@ -12,7 +19,7 @@ dotenv.config();
 //rest object
 const app = express();
 
-//database connection
+//database connection   https://chatgpt.com/c/00ba90c6-1ad5-4e45-a562-3653fc4c4bc6
 connectDB();
 
 //middlewares
@@ -22,6 +29,13 @@ app.use(morgan("dev"));
 
 //routes
 app.use('/api/v1/auth',authRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/workouts', workoutRoutes);
+app.use('/api/v1/nutrition-logs', nutritionLogRoutes);
+app.use('/api/v1/progress-logs', progressLogRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
+app.use('/api/v1/preferences', preferenceRoutes);
+app.use('/api/v1/support', supportRoutes);
 
 //rest api
 app.get('/',(req,res)=>{

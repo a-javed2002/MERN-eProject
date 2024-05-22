@@ -1,4 +1,4 @@
-import userModel from "../models/userModel.js";
+import User from '../models/User.js';
 import { comparePassword, hashPassword } from "./../helpers/authHelper.js";
 import JWT from "jsonwebtoken";
 
@@ -23,7 +23,7 @@ export const registerController = async (req, res) => {
     }
 
     //check existing user
-    const existingUser = await userModel.findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
         .status(200)
@@ -33,7 +33,7 @@ export const registerController = async (req, res) => {
     //register user
     const hashPass = await hashPassword(password);
     //save
-    const user = await new userModel({
+    const user = await new User({
       name,
       email,
       password: hashPass,
@@ -63,7 +63,7 @@ export const loginController = async (req, res) => {
         .send({ success: false, message: "Invalid Email or Password" });
     }
     //chekc user
-    const user = await userModel.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
       res
         .status(404)
@@ -121,8 +121,8 @@ export const testController = (req, res) => {
 //emp controller
 export const getAllEmployees = async (req, res) => {
   try {
-    // Fetch all employees using the all() method of userModel
-    const allEmployees = await userModel.find({});
+    // Fetch all employees using the all() method of User
+    const allEmployees = await User.find({});
 
     // Send the response with the list of employees
     res.json(allEmployees);
