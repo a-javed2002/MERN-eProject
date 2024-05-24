@@ -1,4 +1,5 @@
-import mongoose from "mongoose";const exerciseSchema = require('./Exercise');
+import mongoose from "mongoose";
+import exerciseSchema from "./Exercise.js";
 
 const workoutSchema = new mongoose.Schema({
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -10,4 +11,4 @@ const workoutSchema = new mongoose.Schema({
 
 const Workout = mongoose.model('Workout', workoutSchema);
 
-module.exports = Workout;
+export default Workout;

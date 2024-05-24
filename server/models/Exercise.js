@@ -7,4 +7,4 @@ const exerciseSchema = new mongoose.Schema({
     notes: String
 });
 
-module.exports = exerciseSchema;
+export default exerciseSchema;

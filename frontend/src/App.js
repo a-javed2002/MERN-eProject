@@ -1,7 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
-import Dashboard from './pages/dashboard';
 import { Routes, Route } from 'react-router-dom';
+import Dashboard from './pages/dashboard';
+import myDashboard from './components/Dashboard';
 
 import CreateWorkout from './components/Workouts/CreateWorkout';
 import WorkoutList from './components/Workouts/WorkoutList';
@@ -37,6 +38,12 @@ import CreatePreference from './components/Preferences/CreatePreference';
 import PreferenceList from './components/Preferences/PreferenceList';
 import UpdatePreference from './components/Preferences/UpdatePreference';
 import DeletePreference from './components/Preferences/DeletePreference';
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
+import ForgetPassword from './components/Auth/ForgetPassword';
+import NewPassword from './components/Auth/NewPassword';
+import InternalServerError from './components/Extra/InternalServerError';
+import PageNotFound from './components/Extra/PageNotFound';
 
 const Workouts = () => {
   return (
@@ -115,19 +122,34 @@ const Preferences = () => {
   );
 };
 
+const Auth = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forget-password" element={<ForgetPassword />} />
+      <Route path="/new-password" element={<NewPassword />} />
+    </Routes>
+  );
+};
+
 function App() {
   return (
     <>
-      <Routes>
-        <Route path='/' element={<Dashboard />}></Route>
-        <Route path="/workouts/*" element={<Workouts />} />
-        <Route path="/progress/*" element={<Progress />} />
-        <Route path="/nutrition/*" element={<Nutritions />} />
-        <Route path="/notifications/*" element={<Notifications />} />
-        <Route path="/supports/*" element={<Supports />} />
-        <Route path="/users/*" element={<Users />} />
-        <Route path="/preferences/*" element={<Preferences />} />
-      </Routes>
+        <Routes>
+          <Route path='/' element={<Dashboard />}></Route>
+          <Route path='/500' element={<InternalServerError />}></Route>
+          <Route path='/404' element={<PageNotFound />}></Route>
+          <Route path='/auth' element={<Auth />}></Route>
+          <Route path="/dashboard" element={<myDashboard />} />
+          <Route path="/workouts/*" element={<Workouts />} />
+          <Route path="/progress/*" element={<Progress />} />
+          <Route path="/nutrition/*" element={<Nutritions />} />
+          <Route path="/notifications/*" element={<Notifications />} />
+          <Route path="/supports/*" element={<Supports />} />
+          <Route path="/users/*" element={<Users />} />
+          <Route path="/preferences/*" element={<Preferences />} />
+        </Routes>
     </>
   );
 }

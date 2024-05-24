@@ -17,4 +17,4 @@ const progressLogSchema = new mongoose.Schema({
 
 const ProgressLog = mongoose.model('ProgressLog', progressLogSchema);
 
-module.exports = ProgressLog;
+export default ProgressLog;

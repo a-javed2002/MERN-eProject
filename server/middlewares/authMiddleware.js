@@ -1,21 +1,30 @@
 import JWT from 'jsonwebtoken';
 import colors from 'colors';
-import User from '../models/User.js';
+import userModel from '../models/UserModel.js';
+import TokenModel from "../models/TokenModel.js";
 
-//Protected Routes token base
-export const requireSignIn = (req,res,next) => {
-    try {
-        const decode = JWT.verify(req.headers.authorization,process.env.JWT_SECRET);
-        req.user=decode;
-    } catch (error) {
-        console.log(`Error In Require Sign In ${error}`.bgRed.white);
-        res.status(401).send({success:false,message:"Error In Require Sign In",error})
+export const requireSignIn = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = JWT.verify(token, process.env.JWT_SECRET);
+
+    // Check if token is blacklisted
+    const tokenInBlacklist = await TokenModel.findOne({ token });
+    if (tokenInBlacklist) {
+      return res.status(401).send({ success: false, message: "Token is invalid" });
     }
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.log(`Error in requireSignIn middleware ${error}`);
+    res.status(401).send({ success: false, message: "Unauthorized" });
+  }
 };
 
 export const isAdmin = async (req,res,next) => {
     try {
-        const user = await User.findById(req.body.id)
+        const user = await userModel.findById(req.body.id)
         if(user.role != 1){
             res.status(401).send({success:false,message:"Unauthorized Access"});
         }

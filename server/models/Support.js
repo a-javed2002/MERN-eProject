@@ -8,4 +8,4 @@ const supportSchema = new mongoose.Schema({
 
 const Support = mongoose.model('Support', supportSchema);
 
-module.exports = Support;
+export default Support;

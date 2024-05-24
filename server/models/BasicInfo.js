@@ -6,4 +6,4 @@ const basicInfoSchema = new mongoose.Schema({
     weight: { type: Number, min: 0 },
 });
 
-module.exports = basicInfoSchema;
+export default basicInfoSchema;

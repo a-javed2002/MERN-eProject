@@ -1,4 +1,5 @@
-import mongoose from "mongoose";const foodSchema = require('./Food');
+import mongoose from "mongoose";
+import foodSchema from "./Food.js";
 
 const nutritionLogSchema = new mongoose.Schema({
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -9,4 +10,4 @@ const nutritionLogSchema = new mongoose.Schema({
 
 const NutritionLog = mongoose.model('NutritionLog', nutritionLogSchema);
 
-module.exports = NutritionLog;
+export default NutritionLog;

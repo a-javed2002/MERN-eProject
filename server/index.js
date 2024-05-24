@@ -12,6 +12,7 @@ import progressLogRoutes from './routes/progressLogRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import preferenceRoutes from './routes/preferenceRoutes.js';
 import supportRoutes from './routes/supportRoutes.js';
+import dashboardRoutes  from './routes/dashboardRoutes.js';
 
 //configure env
 dotenv.config();
@@ -36,6 +37,7 @@ app.use('/api/v1/progress-logs', progressLogRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/preferences', preferenceRoutes);
 app.use('/api/v1/support', supportRoutes);
+app.use('/api/v1/dashboard', dashboardRoutes);
 
 //rest api
 app.get('/',(req,res)=>{

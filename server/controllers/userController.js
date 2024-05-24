@@ -1,9 +1,9 @@
-import User from '../models/User.js';
+import UserModel from '../models/UserModel.js';
 
 // Create a new user
 export const createUser = async (req, res) => {
     try {
-        const user = new User(req.body);
+        const user = new UserModel(req.body);
         await user.save();
         res.status(201).send(user);
     } catch (error) {
@@ -14,7 +14,7 @@ export const createUser = async (req, res) => {
 // Get a user by ID
 export const getUser = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await UserModel.findById(req.params.id);
         if (!user) {
             return res.status(404).send();
         }
@@ -27,7 +27,7 @@ export const getUser = async (req, res) => {
 // Update a user by ID
 export const updateUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const user = await UserModel.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!user) {
             return res.status(404).send();
         }
@@ -40,7 +40,7 @@ export const updateUser = async (req, res) => {
 // Delete a user by ID
 export const deleteUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id);
+        const user = await UserModel.findByIdAndDelete(req.params.id);
         if (!user) {
             return res.status(404).send();
         }

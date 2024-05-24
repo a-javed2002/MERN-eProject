@@ -10,4 +10,4 @@ const foodSchema = new mongoose.Schema({
     }
 });
 
-module.exports = foodSchema;
+export default foodSchema;

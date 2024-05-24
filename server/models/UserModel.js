@@ -1,4 +1,5 @@
-import mongoose from "mongoose";const basicInfoSchema = require('./BasicInfo');
+import mongoose from "mongoose";
+import basicInfoSchema from "./BasicInfo.js";
 
 const userSchema = new mongoose.Schema({
     username: { type: String, unique: true, required: true },
@@ -10,8 +11,8 @@ const userSchema = new mongoose.Schema({
     workout_routines: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workout' }],
     nutrition_logs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'NutritionLog' }],
     progress_logs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ProgressLog' }]
-});
+}, { timestamps: true });
 
-const User = mongoose.model('User', userSchema);
+const UserModel = mongoose.model('User', userSchema);
 
-module.exports = User;
+export default UserModel;

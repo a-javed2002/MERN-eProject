@@ -1,10 +1,14 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import MyHeader from "../components/Main/header";
+import MyAsideBar from "../components/Main/aside";
 
 const Dashboard = () => {
 
     return (
         <>
+        <MyHeader/>
+        <MyAsideBar/>
             {/* Content Wrapper. Contains page content */}
             <div className="content-wrapper">
                 {/* Content Header (Page header) */}
