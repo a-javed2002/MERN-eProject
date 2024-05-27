@@ -1,10 +1,17 @@
 import Workout from '../models/Workout.js';
+import { sendPushNotification } from '../helpers/notification.js';
 
 // Create a new workout
 export const createWorkout = async (req, res) => {
     try {
         const workout = new Workout(req.body);
         await workout.save();
+
+        // Notification logic for workout creation
+        const userId = workout.user_id;
+        const message = 'A new workout has been created!';
+        await sendPushNotification(userId, message);
+
         res.status(201).send(workout);
     } catch (error) {
         res.status(400).send(error);
@@ -31,6 +38,12 @@ export const updateWorkout = async (req, res) => {
         if (!workout) {
             return res.status(404).send();
         }
+
+        // Notification logic for workout edit
+        const userId = workout.user_id;
+        const message = 'A workout has been updated!';
+        await sendPushNotification(userId, message);
+
         res.send(workout);
     } catch (error) {
         res.status(400).send(error);

@@ -3,8 +3,14 @@ import TokenModel from "../models/TokenModel.js";
 import { comparePassword, hashPassword } from "./../helpers/authHelper.js";
 import JWT from "jsonwebtoken";
 import { sendOtpEmail } from './../helpers/emailHelper.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 let tempTokens = {};
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const registerController = async (req, res) => {
   try {
@@ -55,11 +61,11 @@ export const registerController = async (req, res) => {
 
 export const loginController = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, fcmToken } = req.body;
 
     // Validation
-    if (!email || !password) {
-      return res.status(400).send({ success: false, message: "Invalid Email or Password" });
+    if (!email || !password || !fcmToken) {
+      return res.status(400).send({ success: false, message: "Invalid Email, Password, or FCM Token" });
     }
 
     // Check user
@@ -73,11 +79,22 @@ export const loginController = async (req, res) => {
       return res.status(400).send({ success: false, message: "Invalid Password" });
     }
 
+    // Check if the FCM token already exists
+    const existingTokenIndex = user.fcmTokens.findIndex(tokenObj => tokenObj.token === fcmToken);
+
+    if (existingTokenIndex !== -1) {
+      // If token exists, update its loginTime
+      user.fcmTokens[existingTokenIndex].loginTime = new Date();
+    } else {
+      // If token doesn't exist, append it to the array
+      user.fcmTokens.push({ token: fcmToken });
+    }
+
+    // Save the updated user document
+    await user.save();
+
     // Token
     const token = JWT.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-
-    // Save token to the database
-    await new TokenModel({ token }).save();
 
     res.status(200).send({
       success: true,
@@ -95,6 +112,8 @@ export const loginController = async (req, res) => {
     res.status(500).send({ success: false, message: "Error In Login Controller", error });
   }
 };
+
+
 
 export const logoutController = async (req, res) => {
   try {
@@ -185,5 +204,160 @@ export const resetPasswordController = async (req, res) => {
   } catch (error) {
     console.log(`Error in reset-password: ${error}`);
     res.status(500).send({ success: false, message: 'Internal Server Error' });
+  }
+};
+
+//more.....
+// Update Profile Picture
+export const updateProfilePicture = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { profile_picture } = req.body;
+
+    if (!profile_picture) {
+      return res.status(400).send({ error: "Profile picture URL is required" });
+    }
+
+    const user = await userModel.findByIdAndUpdate(userId, { profile_picture }, { new: true });
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    res.status(200).send({ success: true, message: "Profile picture updated successfully", user });
+  } catch (error) {
+    res.status(500).send({ success: false, message: "Error updating profile picture", error });
+  }
+};
+
+// Update Password
+export const updatePassword = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).send({ error: "Old and new passwords are required" });
+    }
+
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    const isMatch = await comparePassword(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).send({ error: "Incorrect old password" });
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).send({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).send({ success: false, message: "Error updating password", error });
+  }
+};
+
+// Add Image to Gallery
+export const addImageToGallery = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { imageUrl } = req.body;
+
+    if (!imageUrl) {
+      return res.status(400).send({ error: "Image URL is required" });
+    }
+
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    user.gallery = user.gallery || [];
+    user.gallery.push(imageUrl);
+    await user.save();
+
+    res.status(200).send({ success: true, message: "Image added to gallery successfully", gallery: user.gallery });
+  } catch (error) {
+    res.status(500).send({ success: false, message: "Error adding image to gallery", error });
+  }
+};
+
+// Upload Profile Picture
+export const uploadProfilePicture = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const profile_picture = req.file.path; // Get the path of the uploaded file
+
+    const user = await userModel.findByIdAndUpdate(userId, { profile_picture }, { new: true });
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    res.status(200).send({ success: true, message: "Profile picture uploaded successfully", user });
+  } catch (error) {
+    res.status(500).send({ success: false, message: "Error uploading profile picture", error });
+  }
+};
+
+// Add Image to Gallery
+export const uploadImageToGallery = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const imageUrl = req.file.path; // Get the path of the uploaded file
+
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    user.gallery = user.gallery || [];
+    user.gallery.push(imageUrl);
+    await user.save();
+
+    res.status(200).send({ success: true, message: "Image uploaded to gallery successfully", gallery: user.gallery });
+  } catch (error) {
+    res.status(500).send({ success: false, message: "Error uploading image to gallery", error });
+  }
+};
+
+// Remove Specific Image from Gallery
+export const removeImageFromGallery = async (req, res) => {
+  try {
+    const { userId, imageUrl } = req.params;
+
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).send({ success: false, message: "User not found" });
+    }
+
+    // Find the image in the gallery
+    const imageIndex = user.gallery.indexOf(imageUrl);
+    if (imageIndex === -1) {
+      return res.status(404).send({ success: false, message: "Image not found in gallery" });
+    }
+
+    // Remove the image from the gallery array
+    user.gallery.splice(imageIndex, 1);
+    await user.save();
+
+    // Delete the image file from the server
+    const imagePath = path.join(__dirname, '../', imageUrl);
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send({ success: false, message: "Error deleting image file" });
+      }
+      res.status(200).send({ success: true, message: "Image removed successfully", gallery: user.gallery });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ success: false, message: "Internal Server Error", error });
   }
 };

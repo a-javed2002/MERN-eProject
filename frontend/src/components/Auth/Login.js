@@ -9,6 +9,10 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const handleGoogleLogin = () => {
+    window.location.href = '/auth/google'; // Redirect to backend Google OAuth route
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -94,7 +98,7 @@ const Login = () => {
               <a href="#" className="btn btn-block btn-primary">
                 <i className="fab fa-facebook mr-2" /> Sign in using Facebook
               </a>
-              <a href="#" className="btn btn-block btn-danger">
+              <a href="#" className="btn btn-block btn-danger" onClick={handleGoogleLogin}>
                 <i className="fab fa-google-plus mr-2" /> Sign in using Google+
               </a>
             </div>
