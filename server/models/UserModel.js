@@ -14,12 +14,18 @@ const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     profile_picture: { type: String, default: 'default_profile.jpg' },
     googleId: { type: String, unique: true, sparse: true }, // Google ID field
-    basic_info: { type: basicInfoSchema, required: true },
+    basic_info: { type: basicInfoSchema, required: false },
     fcmTokens: [fcmTokenSchema], // Array of FCM tokens and login times
     workout_routines: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workout' }],
     nutrition_logs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'NutritionLog' }],
     progress_logs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ProgressLog' }]
 }, { timestamps: true });
+
+// Add a static method to your schema to find a user by email
+userSchema.statics.findByEmail = async function(email) {
+    const user = await this.findOne({ email });
+    return user;
+};
 
 const UserModel = mongoose.model('User', userSchema);
 

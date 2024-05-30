@@ -37,6 +37,16 @@ export const updateUser = async (req, res) => {
     }
 };
 
+// Get all users
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await UserModel.find();
+        res.send(users);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
 // Delete a user by ID
 export const deleteUser = async (req, res) => {
     try {

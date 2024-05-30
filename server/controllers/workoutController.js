@@ -4,7 +4,7 @@ import { sendPushNotification } from '../helpers/notification.js';
 // Create a new workout
 export const createWorkout = async (req, res) => {
     try {
-        const workout = new Workout(req.body);
+        const workout = new Workout({ ...req.body, user_id: req.user._id });
         await workout.save();
 
         // Notification logic for workout creation
@@ -18,10 +18,20 @@ export const createWorkout = async (req, res) => {
     }
 };
 
-// Get a workout by ID
+// Get all workouts for a specific user
+export const getAllWorkouts = async (req, res) => {
+    try {
+        const workouts = await Workout.find({ user_id: req.user._id });
+        res.send(workouts);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
+// Get a workout by ID and verify user ownership
 export const getWorkout = async (req, res) => {
     try {
-        const workout = await Workout.findById(req.params.id).populate('exercises');
+        const workout = await Workout.findOne({ _id: req.params.id, user_id: req.user._id }).populate('exercises');
         if (!workout) {
             return res.status(404).send();
         }
@@ -31,13 +41,23 @@ export const getWorkout = async (req, res) => {
     }
 };
 
-// Update a workout by ID
+// Update a workout by ID and verify user ownership
 export const updateWorkout = async (req, res) => {
     try {
-        const workout = await Workout.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const workout = await Workout.findOne({ _id: req.params.id, user_id: req.user._id });
+        
         if (!workout) {
             return res.status(404).send();
         }
+
+        // Check if the date is in the past
+        if (new Date(workout.date) < Date.now()) {
+            return res.status(400).send({ error: 'Cannot update a workout for a past date.' });
+        }
+
+        // Update the workout
+        Object.assign(workout, req.body);
+        await workout.save();
 
         // Notification logic for workout edit
         const userId = workout.user_id;
@@ -50,13 +70,22 @@ export const updateWorkout = async (req, res) => {
     }
 };
 
-// Delete a workout by ID
+// Delete a workout by ID and verify user ownership
 export const deleteWorkout = async (req, res) => {
     try {
-        const workout = await Workout.findByIdAndDelete(req.params.id);
+        const workout = await Workout.findOne({ _id: req.params.id, user_id: req.user._id });
+        
         if (!workout) {
             return res.status(404).send();
         }
+
+        // Check if the date is in the past
+        if (new Date(workout.date) < Date.now()) {
+            return res.status(400).send({ error: 'Cannot delete a workout for a past date.' });
+        }
+
+        // Delete the workout
+        await workout.remove();
         res.send(workout);
     } catch (error) {
         res.status(500).send(error);

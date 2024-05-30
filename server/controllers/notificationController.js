@@ -11,6 +11,16 @@ export const createNotification = async (req, res) => {
     }
 };
 
+// Get all notification
+export const getAllNotification = async (req, res) => {
+    try {
+        const notification = await Notification.find();
+        res.send(notification);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
 // Get a notification by ID
 export const getNotification = async (req, res) => {
     try {

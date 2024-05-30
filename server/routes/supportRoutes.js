@@ -1,9 +1,12 @@
 import express from 'express';
-import { createSupportRequest, getSupportRequest, updateSupportRequest, deleteSupportRequest } from '../controllers/supportController.js';
+import { createSupportRequest, getSupportRequest, updateSupportRequest, deleteSupportRequest,getAllSupport } from '../controllers/supportController.js';
 const router = express.Router();
 
 // Create a new support request
 router.post('/', createSupportRequest);
+
+// Get all users
+router.get('/', getAllSupport);
 
 // Get a support request by ID
 router.get('/:id', getSupportRequest);

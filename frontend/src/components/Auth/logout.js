@@ -6,13 +6,15 @@ import axios from 'axios';
 const Logout = () => {
     const navigate = useNavigate();
 
+    console.log("logout...");
+
     useEffect(() => {
         const logout = async () => {
             try {
                 const token = localStorage.getItem('token');
 
                 // Send request to server to invalidate the token
-                await axios.post('/api/logout', {}, {
+                await axios.post('http://localhost:8080/api/v1/auth/logout', {}, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -22,7 +24,7 @@ const Logout = () => {
                 localStorage.removeItem('token');
 
                 // Redirect to login page
-                navigate('/login');
+                navigate('/');
             } catch (error) {
                 console.error('Error during logout:', error);
                 // Optionally, you could handle errors, like redirecting to an error page or showing a notification
@@ -30,7 +32,7 @@ const Logout = () => {
         };
 
         logout();
-    }, [history]);
+    }, [navigate]);
 
     return (
         <div>

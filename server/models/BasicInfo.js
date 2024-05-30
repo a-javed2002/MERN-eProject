@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 const basicInfoSchema = new mongoose.Schema({
-    gender: { type: String, enum: ['male', 'female', 'other'], required: true },
-    age: { type: Number, min: 0, required: true },
-    height: { type: Number, min: 0, required: true },
+    gender: { type: String, enum: ['male', 'female', 'other'], required: false },
+    age: { type: Number, min: 0, required: false },
+    height: { type: Number, min: 0, required: false },
     weight: { type: Number, min: 0 },
 });
 

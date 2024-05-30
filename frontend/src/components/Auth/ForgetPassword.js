@@ -1,55 +1,63 @@
-// ForgetPassword.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import EmailForm from './EmailForm';
 import OtpForm from './OtpForm';
 import ResetPasswordForm from './ResetPasswordForm';
+import { useNavigate } from 'react-router-dom';
 
 const ForgetPassword = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('a.javed0202@gmail.com');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
+  const navigate = useNavigate();
 
   const sendOtp = async () => {
     try {
-      const response = await axios.post('/api/auth/send-otp', { email });
+      const response = await axios.post('http://localhost:8080/api/v1/auth/send-otp', { email });
       if (response.data.success) {
         setOtpSent(true);
-        alert(response.data.message);
+        toast.success(response.data.message);
+      }
+      else{
+        toast.error(response.data.message);
       }
     } catch (error) {
-      alert('Error sending OTP');
+      toast.error('Error sending OTP');
     }
   };
 
   const verifyOtp = async () => {
     try {
-      const response = await axios.post('/api/auth/verify-otp', { email, otp });
+      const response = await axios.post('http://localhost:8080/api/v1/auth/verify-otp', { email, otp });
       if (response.data.success) {
         setOtpVerified(true);
-        alert(response.data.message);
+        toast.success(response.data.message);
       }
     } catch (error) {
-      alert('Error verifying OTP');
+      toast.error('Error verifying OTP');
     }
   };
 
   const resetPassword = async () => {
     try {
-      const response = await axios.post('/api/auth/reset-password', { email, newPassword });
+      const response = await axios.post('http://localhost:8080/api/v1/auth/reset-password', { email, newPassword });
       if (response.data.success) {
-        alert(response.data.message);
+        toast.success(response.data.message);
+        navigate('/');
       }
     } catch (error) {
-      alert('Error resetting password');
+      toast.error('Error resetting password');
     }
   };
 
   return (
     <div className="hold-transition register-page">
+      <ToastContainer />
       <div className="login-box">
         <div className="login-logo">
           <a href="#"><b>Admin</b>LTE</a>
@@ -69,7 +77,7 @@ const ForgetPassword = () => {
               <ResetPasswordForm newPassword={newPassword} setNewPassword={setNewPassword} resetPassword={resetPassword} />
             )}
             <p className="mt-3 mb-1">
-              <Link to="/auth/login">Login</Link>
+              <Link to="/auth/">Login</Link>
             </p>
             <p className="mb-0">
               <Link to="/auth/register" className="text-center">Register a new membership</Link>

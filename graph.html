@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Bar Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .chart-container {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px;
+        }
+        .fullscreen {
+            width: 100% !important;
+            height: 100% !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            background-color: white;
+            z-index: 9999;
+        }
+        #fullscreenButton {
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button id="fullscreenButton">View Fullscreen</button>
+    <div class="chart-container">
+        <canvas id="salesChart"></canvas>
+    </div>
+
+    <script>
+        // Sample data
+        const salesData = [
+            { user: 'User1', paymentMethod: 'Cash', sales: 150 },
+            { user: 'User1', paymentMethod: 'Card', sales: 200 },
+            { user: 'User2', paymentMethod: 'Cash', sales: 300 },
+            { user: 'User2', paymentMethod: 'Card', sales: 250 },
+            { user: 'User3', paymentMethod: 'Cash', sales: 100 },
+            { user: 'User3', paymentMethod: 'Card', sales: 150 },
+            // Add more data as needed
+        ];
+
+        const users = [...new Set(salesData.map(data => data.user))];
+        const paymentMethods = [...new Set(salesData.map(data => data.paymentMethod))];
+
+        const dataset = paymentMethods.map(method => {
+            return {
+                label: method,
+                data: users.map(user => {
+                    const userSale = salesData.find(data => data.user === user && data.paymentMethod === method);
+                    return userSale ? userSale.sales : 0;
+                }),
+                backgroundColor: method === 'Cash' ? 'rgba(75, 192, 192, 0.6)' : 'rgba(153, 102, 255, 0.6)',
+                borderColor: method === 'Cash' ? 'rgba(75, 192, 192, 1)' : 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            };
+        });
+
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: users,
+                datasets: dataset
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Fullscreen functionality
+        const fullscreenButton = document.getElementById('fullscreenButton');
+        const chartContainer = document.querySelector('.chart-container');
+
+        fullscreenButton.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                chartContainer.classList.add('fullscreen');
+                chartContainer.requestFullscreen().catch(err => {
+                    alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                chartContainer.classList.remove('fullscreen');
+                salesChart.resize();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (!document.fullscreenElement) {
+                salesChart.resize();
+            }
+        });
+    </script>
+</body>
+</html>

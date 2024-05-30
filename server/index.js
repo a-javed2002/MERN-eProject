@@ -56,7 +56,7 @@ app.use(googleRoutes);
 
 //rest api
 app.get('/',(req,res)=>{
-    res.send("<h1>Welcome To Ecommerce App</h1>");
+    res.send("<h1>Welcome To Gym Freak</h1>");
     // res.send({
     //     message: "Welcome To Ecommerce App"
     // });

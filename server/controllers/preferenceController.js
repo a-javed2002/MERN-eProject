@@ -11,6 +11,16 @@ export const createPreference = async (req, res) => {
     }
 };
 
+// Get all preference
+export const getAllProgressLog = async (req, res) => {
+    try {
+        const preference = await Preference.find();
+        res.send(preference);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
 // Get a preference by ID
 export const getPreference = async (req, res) => {
     try {

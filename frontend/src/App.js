@@ -39,11 +39,15 @@ import PreferenceList from './components/Preferences/PreferenceList';
 import UpdatePreference from './components/Preferences/UpdatePreference';
 import DeletePreference from './components/Preferences/DeletePreference';
 import Login from './components/Auth/Login';
+import AuthRoute from './components/Auth/AuthRoute';
 import Register from './components/Auth/Register';
 import ForgetPassword from './components/Auth/ForgetPassword';
 import NewPassword from './components/Auth/NewPassword';
 import InternalServerError from './components/Extra/InternalServerError';
 import PageNotFound from './components/Extra/PageNotFound';
+import modalAndAlerts from './components/Extra/modalAndAlerts';
+import UserDetail from './components/Users/UserDetail';
+import Calendar from './components/Calendar';
 
 const Workouts = () => {
   return (
@@ -52,6 +56,7 @@ const Workouts = () => {
       <Route path="/create" element={<CreateWorkout />} />
       <Route path="/update/:id" element={<UpdateWorkout />} />
       <Route path="/delete/:id" element={<DeleteWorkout />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
@@ -63,6 +68,7 @@ const Progress = () => {
       <Route path="/create" element={<CreateProgress />} />
       <Route path="/update/:id" element={<UpdateProgress />} />
       <Route path="/delete/:id" element={<DeleteProgress />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
@@ -74,6 +80,7 @@ const Nutritions = () => {
       <Route path="/create" element={<CreateNutrition />} />
       <Route path="/update/:id" element={<UpdateNutrition />} />
       <Route path="/delete/:id" element={<DeleteNutrition />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
@@ -85,6 +92,7 @@ const Notifications = () => {
       <Route path="/create" element={<CreateNotification />} />
       <Route path="/update/:id" element={<UpdateNotification />} />
       <Route path="/delete/:id" element={<DeleteNotification />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
@@ -96,6 +104,7 @@ const Supports = () => {
       <Route path="/create" element={<CreateSupport />} />
       <Route path="/update/:id" element={<UpdateSupport />} />
       <Route path="/delete/:id" element={<DeleteSupport />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
@@ -107,6 +116,8 @@ const Users = () => {
       <Route path="/create" element={<CreateUser />} />
       <Route path="/update/:id" element={<UpdateUser />} />
       <Route path="/delete/:id" element={<DeleteUser />} />
+      <Route path="/:userId" component={UserDetail} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
@@ -118,6 +129,7 @@ const Preferences = () => {
       <Route path="/create" element={<CreatePreference />} />
       <Route path="/update/:id" element={<UpdatePreference />} />
       <Route path="/delete/:id" element={<DeletePreference />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
@@ -129,6 +141,7 @@ const Auth = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forget-password" element={<ForgetPassword />} />
       <Route path="/new-password" element={<NewPassword />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
@@ -137,10 +150,12 @@ function App() {
   return (
     <>
         <Routes>
-          <Route path='/' element={<Dashboard />}></Route>
+          <Route path='/' element={<AuthRoute />}></Route>
+          <Route path='/Calendar' element={<Calendar />}></Route>
+          <Route path='/modalAndAlerts' element={<modalAndAlerts />}></Route>
           <Route path='/500' element={<InternalServerError />}></Route>
           <Route path='/404' element={<PageNotFound />}></Route>
-          <Route path='/auth' element={<Auth />}></Route>
+          <Route path='/auth/*' element={<Auth />}></Route>
           <Route path="/dashboard" element={<myDashboard />} />
           <Route path="/workouts/*" element={<Workouts />} />
           <Route path="/progress/*" element={<Progress />} />
@@ -149,6 +164,8 @@ function App() {
           <Route path="/supports/*" element={<Supports />} />
           <Route path="/users/*" element={<Users />} />
           <Route path="/preferences/*" element={<Preferences />} />
+          {/* 404 Route */}
+        <Route path="*" element={<PageNotFound />} />
         </Routes>
     </>
   );

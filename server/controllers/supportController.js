@@ -11,6 +11,16 @@ export const createSupportRequest = async (req, res) => {
     }
 };
 
+// Get all supports
+export const getAllSupport = async (req, res) => {
+    try {
+        const supports = await Support.find();
+        res.send(supports);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
 // Get a support request by ID
 export const getSupportRequest = async (req, res) => {
     try {

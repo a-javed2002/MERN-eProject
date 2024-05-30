@@ -93,8 +93,12 @@ export const loginController = async (req, res) => {
     // Save the updated user document
     await user.save();
 
-    // Token
+    // Generate JWT
     const token = JWT.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+    // Save the JWT in the Token collection
+    const tokenDocument = new TokenModel({ token });
+    await tokenDocument.save();
 
     res.status(200).send({
       success: true,
@@ -108,11 +112,10 @@ export const loginController = async (req, res) => {
       token
     });
   } catch (error) {
-    console.log(`Error In loginController ${error}`);
+    console.log(`Error In loginController: ${error}`);
     res.status(500).send({ success: false, message: "Error In Login Controller", error });
   }
 };
-
 
 
 export const logoutController = async (req, res) => {
@@ -120,7 +123,11 @@ export const logoutController = async (req, res) => {
     const token = req.headers.authorization.split(" ")[1];
 
     // Remove token from database
-    await TokenModel.findOneAndDelete({ token });
+    const deletedToken = await TokenModel.findOneAndDelete({ token });
+
+    if (!deletedToken) {
+      return res.status(404).send({ success: false, message: "Token not found" });
+    }
 
     res.status(200).send({ success: true, message: "Logout Successful" });
   } catch (error) {
@@ -149,9 +156,35 @@ export const getAllEmployees = async (req, res) => {
   }
 };
 
+// export const sendOtpController = async (req, res) => {
+//   try {
+//     const { email } = req.body;
+
+//     // Generate a random OTP
+//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+//     // Save the OTP temporarily
+//     tempTokens[email] = { otp, createdAt: Date.now() };
+
+//     // Send the OTP email
+//     await sendOtpEmail(email, otp);
+
+//     res.status(200).send({ success: true, message: 'OTP sent to email' });
+//   } catch (error) {
+//     console.log(`Error in send-otp: ${error}`);
+//     res.status(500).send({ success: false, message: 'Internal Server Error' });
+//   }
+// };
+
 export const sendOtpController = async (req, res) => {
   try {
     const { email } = req.body;
+
+    // Check if the email exists
+    const user = await userModel.findByEmail(email);
+    if (!user) {
+      return res.status(404).send({ success: false, message: 'Email not found' });
+    }
 
     // Generate a random OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
