@@ -1,4 +1,5 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect, useContext } from 'react';
+import { UserContext } from '../../../src/contexts/UserContext.js';
 import { Link, useNavigate  } from 'react-router-dom';
 import axios from 'axios';
 import { messaging } from '../../api/firebase.js'; // Import the messaging object
@@ -14,6 +15,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false); // Add loading state
   const [serverError, setServerError] = useState(false); 
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);
 
   useEffect(() => {
     toast.success("Welcome");
@@ -56,6 +58,8 @@ const Login = () => {
           sessionStorage.setItem('token', token);
           sessionStorage.setItem('email', email); // Store email in session
         }
+        setUser(response.data);
+        console.log(response.data);
         toast.success("Login successful!");
         // navigate('/');
         window.location.href = '/';

@@ -1,8 +1,9 @@
-import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import ForgetPassword from './../Auth/ForgetPassword';
-
+import { UserContext } from '../../../src/contexts/UserContext';
+import React, { useContext } from 'react';
 const MyAsideBar = () => {
+  const { user } = useContext(UserContext);
   return (
     <>
       {/* Main Sidebar Container */}
@@ -20,7 +21,13 @@ const MyAsideBar = () => {
               <img src="%PUBLIC_URL%/dist/img/user2-160x160.jpg" className="img-circle elevation-2" alt="User Image" />
             </div>
             <div className="info">
-              <a href="#" className="d-block">Alexander Pierce</a>
+              <a href="#" className="d-block">
+                {user && (
+                  <div>
+                    Welcome, {user.name}!
+                  </div>
+                )}
+              </a>
             </div>
           </div>
           {/* SidebarSearch Form */}

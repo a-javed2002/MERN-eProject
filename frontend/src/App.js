@@ -5,6 +5,7 @@ import Dashboard from './pages/dashboard';
 import myDashboard from './components/Dashboard';
 
 import CreateWorkout from './components/Workouts/CreateWorkout';
+import CalendarWorkouts from './components/Workouts/CalendarWorkouts';
 import WorkoutList from './components/Workouts/WorkoutList';
 import UpdateWorkout from './components/Workouts/UpdateWorkout';
 import DeleteWorkout from './components/Workouts/DeleteWorkout';
@@ -48,12 +49,13 @@ import PageNotFound from './components/Extra/PageNotFound';
 import modalAndAlerts from './components/Extra/modalAndAlerts';
 import UserDetail from './components/Users/UserDetail';
 import Calendar from './components/Calendar';
-
+import { UserProvider } from './contexts/UserContext';
 const Workouts = () => {
   return (
     <Routes>
       <Route path="/" element={<WorkoutList />} />
       <Route path="/create" element={<CreateWorkout />} />
+      <Route path="/CalendarWorkouts" element={<CalendarWorkouts />} />
       <Route path="/update/:id" element={<UpdateWorkout />} />
       <Route path="/delete/:id" element={<DeleteWorkout />} />
       <Route path="*" element={<PageNotFound />} />
@@ -149,6 +151,7 @@ const Auth = () => {
 function App() {
   return (
     <>
+    <UserProvider>
         <Routes>
           <Route path='/' element={<AuthRoute />}></Route>
           <Route path='/Calendar' element={<Calendar />}></Route>
@@ -167,6 +170,7 @@ function App() {
           {/* 404 Route */}
         <Route path="*" element={<PageNotFound />} />
         </Routes>
+        </UserProvider>
     </>
   );
 }

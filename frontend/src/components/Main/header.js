@@ -1,8 +1,9 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
+import React, { useContext } from 'react';
+import { UserContext } from '../../../src/contexts/UserContext';
 
 const MyHeader = () => {
-  
+  const { user } = useContext(UserContext);
   return (
     <>
       {/* Navbar */}

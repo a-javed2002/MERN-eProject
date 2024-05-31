@@ -2,9 +2,20 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { UserContext } from '../../../src/contexts/UserContext';
+import React, { useContext } from 'react';
 
 const Logout = () => {
     const navigate = useNavigate();
+
+    //
+    const { user, setUser } = useContext(UserContext);
+
+    const handleLogout = () => {
+      setUser(null);
+      localStorage.removeItem('user');
+    };
+    //
 
     console.log("logout...");
 
