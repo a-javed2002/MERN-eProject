@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Selection</title>
+    <style>
+        .tile {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            display: inline-block;
+            cursor: pointer; /* Add cursor pointer */
+        }
+        .tile input[type="checkbox"] {
+            display: none; /* Hide the checkboxes */
+        }
+        .tile.checked {
+            background-color: lightblue; /* Add style for checked tiles */
+        }
+    </style>
+</head>
+<body>
+    <h2>Tile Selection</h2>
+    <div id="tiles">
+        <div class="tile" id="tile1">
+            Tile 1
+            <input type="checkbox" id="checkbox1">
+        </div>
+        <div class="tile" id="tile2">
+            Tile 2
+            <input type="checkbox" id="checkbox2">
+        </div>
+        <div class="tile" id="tile3">
+            Tile 3
+            <input type="checkbox" id="checkbox3">
+        </div>
+        <!-- Add more tiles as needed -->
+    </div>
+
+    <script>
+        const tiles = document.querySelectorAll('.tile');
+
+        tiles.forEach(tile => {
+            tile.addEventListener('click', () => {
+                const checkbox = tile.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked; // Toggle checkbox state
+                tile.classList.toggle('checked', checkbox.checked); // Toggle checked class for styling
+                if (checkbox.checked) {
+                    console.log(`Tile ${checkbox.id} selected.`);
+                    // Perform actions when tile is selected
+                } else {
+                    console.log(`Tile ${checkbox.id} deselected.`);
+                    // Perform actions when tile is deselected
+                }
+            });
+        });
+    </script>
+</body>
+</html>

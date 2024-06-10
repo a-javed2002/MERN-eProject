@@ -5,6 +5,8 @@ const UserDetail = ({ userId }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    userId = "665612cf2d30a599cfd3b805";
+
     useEffect(() => {
         const fetchUser = async () => {
             try {

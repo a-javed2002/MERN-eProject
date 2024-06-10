@@ -30,82 +30,93 @@ const CreateUser = () => {
         <>
         <MyHeader/>
         <MyAsideBar/>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Username"
-                    required
-                />
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                    required
-                />
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                    required
-                />
-                <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Name"
-                    required
-                />
-                <button type="submit">Create User</button>
-            </form>
+            {/* Content Wrapper. Contains page content */}
+            <div className="content-wrapper">
+    {/* Content Header (Page header) */}
+    <div className="content-header">
+        <div className="container-fluid">
+            <div className="row mb-2">
+                <div className="col-sm-6">
+                    <h1 className="m-0">Dashboard</h1>
+                </div>{/* /.col */}
+                <div className="col-sm-6">
+                    <ol className="breadcrumb float-sm-right">
+                        <li className="breadcrumb-item"><a href="#">Home</a></li>
+                        <li className="breadcrumb-item active">Dashboard v1</li>
+                    </ol>
+                </div>{/* /.col */}
+            </div>{/* /.row */}
+        </div>{/* /.container-fluid */}
+    </div>
+    {/* /.content-header */}
+    {/* Main content */}
+    <section className="content">
+        <div className="container-fluid">
+            {/* Small boxes (Stat box) */}
             <div className="row">
-            <div className="col-md-3"></div>
-                <div className="col-md-6">
-                    {/* general form elements */}
-                    <div className="card card-primary">
-                        <div className="card-header">
-                            <h3 className="card-title">Quick Example</h3>
+                <form onSubmit={handleSubmit}>
+                    <div className="card-body">
+                        <div className="form-group">
+                            <label htmlFor="exampleInputUsername">Username</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="exampleInputUsername"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder="Enter username"
+                                required
+                            />
                         </div>
-                        {/* /.card-header */}
-                        {/* form start */}
-                        <form>
-                            <div className="card-body">
-                                <div className="form-group">
-                                    <label htmlFor="exampleInputEmail1">Email address</label>
-                                    <input type="email" className="form-control" id="exampleInputEmail1" placeholder="Enter email" />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="exampleInputPassword1">Password</label>
-                                    <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="exampleInputFile">File input</label>
-                                    <div className="input-group">
-                                        <div className="custom-file">
-                                            <input type="file" className="custom-file-input" id="exampleInputFile" />
-                                            <label className="custom-file-label" htmlFor="exampleInputFile">Choose file</label>
-                                        </div>
-                                        <div className="input-group-append">
-                                            <span className="input-group-text">Upload</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="form-check">
-                                    <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                                    <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
-                                </div>
-                            </div>
-                            {/* /.card-body */}
-                            <div className="card-footer">
-                                <button type="submit" className="btn btn-primary">Submit</button>
-                            </div>
-                        </form>
+                        <div className="form-group">
+                            <label htmlFor="exampleInputPassword">Password</label>
+                            <input
+                                type="password"
+                                className="form-control"
+                                id="exampleInputPassword"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Password"
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="exampleInputEmail">Email address</label>
+                            <input
+                                type="email"
+                                className="form-control"
+                                id="exampleInputEmail"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Enter email"
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="exampleInputName">Name</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="exampleInputName"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Enter name"
+                                required
+                            />
+                        </div>
                     </div>
-                </div>
-            </div>
+                    {/* /.card-body */}
+                    <div className="card-footer">
+                        <button type="submit" className="btn btn-primary">Create User</button>
+                    </div>
+                </form>
+            </div>{/* /.row (main row) */}
+        </div>{/* /.container-fluid */}
+    </section>
+    {/* /.content */}
+</div>
+
+            {/* /.content-wrapper */}
         </>
     );
 };

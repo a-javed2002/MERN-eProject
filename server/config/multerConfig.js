@@ -1,17 +1,36 @@
 import multer from 'multer';
 import path from 'path';
 
-// Multer configuration
+// Set up storage engine
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Specify the destination directory for the uploaded files
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
 });
 
-const upload = multer({ storage });
+// Check file type
+const checkFileType = (file, cb) => {
+    const filetypes = /jpeg|jpg|png/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (extname && mimetype) {
+        return cb(null, true);
+    } else {
+        cb('Error: Images Only!');
+    }
+};
+
+// Init upload
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1024 * 1024 * 5 }, // 5 MB limit
+    fileFilter: function (req, file, cb) {
+        checkFileType(file, cb);
+    }
+});
 
 export default upload;

@@ -1,112 +1,110 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../api/axiosConfig';
-import { Spinner, Alert, Button, Card, Form, InputGroup } from 'react-bootstrap';
+import { Spinner, Alert, Button, Card, Form } from 'react-bootstrap';
 
-const WorkoutList = ({ userId }) => {
-    const [workouts, setWorkouts] = useState([]);
-    const [editingWorkout, setEditingWorkout] = useState(null);
+const WorkoutLogList = ({ userId }) => {
+    const [workoutLogs, setWorkoutLogs] = useState([]);
+    const [expandedLog, setExpandedLog] = useState(null);
+    const [editingWorkoutLog, setEditingWorkoutLog] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    userId = "665612cf2d30a599cfd3b805";
+    userId = "665612cf2d30a599cfd3b805"; // You may want to pass this as a prop or retrieve it dynamically
 
     useEffect(() => {
-        const fetchWorkouts = async () => {
+        const fetchWorkoutLogs = async () => {
             setLoading(true);
             setError(null);
             try {
                 const response = await axios.get('/workouts', { params: { user_id: userId } });
-                setWorkouts(response.data);
+                setWorkoutLogs(response.data);
             } catch (error) {
                 console.error(error);
-                setError('Error fetching workouts. Please try again.');
+                setError('Error fetching workout logs. Please try again.');
             } finally {
                 setLoading(false);
             }
         };
-        fetchWorkouts();
+        fetchWorkoutLogs();
     }, [userId]);
 
-    const deleteWorkout = async (id) => {
+    const deleteWorkoutLog = async (id) => {
         try {
             await axios.delete(`/workouts/${id}`, { data: { user_id: userId } });
-            setWorkouts(workouts.filter(workout => workout._id !== id));
+            setWorkoutLogs(workoutLogs.filter(log => log._id !== id));
         } catch (error) {
             console.error(error);
-            setError('Error deleting workout. Please try again.');
+            setError('Error deleting workout log. Please try again.');
         }
     };
 
-    const startEditing = (workout) => {
-        setEditingWorkout({ ...workout, tags: workout.tags.join(',') });
+    const startEditing = (log) => {
+        setEditingWorkoutLog(log);
     };
 
     const handleUpdateChange = (e) => {
         const { name, value } = e.target;
-        setEditingWorkout({ ...editingWorkout, [name]: value });
+        setEditingWorkoutLog({ ...editingWorkoutLog, [name]: value });
     };
 
-    const handleExerciseChange = (index, event) => {
-        const { name, value } = event.target;
-        const exercises = [...editingWorkout.exercises];
-        exercises[index][name] = value;
-        setEditingWorkout({ ...editingWorkout, exercises });
+    const handleNestedChange = (e, field, index, key) => {
+        const { value } = e.target;
+        const updatedExercises = editingWorkoutLog.exercises.map((exercise, idx) =>
+            idx === index ? { ...exercise, [key]: value } : exercise
+        );
+        setEditingWorkoutLog({ ...editingWorkoutLog, exercises: updatedExercises });
     };
 
-    const addExercise = () => {
-        setEditingWorkout({
-            ...editingWorkout,
-            exercises: [...editingWorkout.exercises, { name: '', sets: 1, reps: 1, weights: 0 }]
-        });
-    };
-
-    const removeExercise = (index) => {
-        const exercises = [...editingWorkout.exercises];
-        exercises.splice(index, 1);
-        setEditingWorkout({ ...editingWorkout, exercises });
-    };
-
-    const saveWorkout = async () => {
+    const saveWorkoutLog = async () => {
         try {
-            const updatedWorkout = {
-                ...editingWorkout,
-                tags: editingWorkout.tags.split(',').map(tag => tag.trim()),
-            };
-            const response = await axios.put(`/workouts/${editingWorkout._id}`, updatedWorkout);
-            setWorkouts(workouts.map(workout => (workout._id === editingWorkout._id ? response.data : workout)));
-            setEditingWorkout(null);
+            const response = await axios.put(`/workouts/${editingWorkoutLog._id}`, editingWorkoutLog);
+            setWorkoutLogs(workoutLogs.map(log => (log._id === editingWorkoutLog._id ? response.data : log)));
+            setEditingWorkoutLog(null);
             setError(null);
         } catch (error) {
             console.error(error);
-            setError('Error updating workout. Please try again.');
+            setError('Error updating workout log. Please try again.');
         }
     };
 
     const cancelEditing = () => {
-        setEditingWorkout(null);
+        setEditingWorkoutLog(null);
         setError(null);
+    };
+
+    const toggleExpanded = (logId) => {
+        setExpandedLog(expandedLog === logId ? null : logId);
     };
 
     return (
         <div className="container mt-5">
-            <h2 className="mb-4">Workout List</h2>
+            <h2 className="mb-4">Workout Log List</h2>
             {loading && <Spinner animation="border" />}
             {error && <Alert variant="danger">{error}</Alert>}
             <ul className="list-unstyled">
-                {workouts.map((workout) => (
-                    <li key={workout._id} className="mb-3">
-                        {editingWorkout && editingWorkout._id === workout._id ? (
+                {workoutLogs.map((log) => (
+                    <li key={log._id} className="mb-3">
+                        {editingWorkoutLog && editingWorkoutLog._id === log._id ? (
                             <Card>
                                 <Card.Body>
                                     <Form>
+                                        <Form.Group className="mb-3">
+                                            <Form.Label>Date</Form.Label>
+                                            <Form.Control
+                                                type="date"
+                                                name="date"
+                                                value={editingWorkoutLog.date.split('T')[0]}
+                                                onChange={handleUpdateChange}
+                                                required
+                                            />
+                                        </Form.Group>
                                         <Form.Group className="mb-3">
                                             <Form.Label>Category</Form.Label>
                                             <Form.Control
                                                 type="text"
                                                 name="category"
-                                                value={editingWorkout.category}
+                                                value={editingWorkoutLog.category}
                                                 onChange={handleUpdateChange}
-                                                placeholder="Category"
                                                 required
                                             />
                                         </Form.Group>
@@ -115,64 +113,58 @@ const WorkoutList = ({ userId }) => {
                                             <Form.Control
                                                 type="text"
                                                 name="tags"
-                                                value={editingWorkout.tags}
+                                                value={editingWorkoutLog.tags.join(', ')}
                                                 onChange={handleUpdateChange}
-                                                placeholder="Tags (comma-separated)"
                                                 required
                                             />
                                         </Form.Group>
-                                        {editingWorkout.exercises.map((exercise, index) => (
-                                            <div key={index} className="mb-3">
-                                                <InputGroup className="mb-3">
+                                        {editingWorkoutLog.exercises.map((exercise, index) => (
+                                            <div key={exercise._id}>
+                                                <h5>Exercise {index + 1}</h5>
+                                                <Form.Group className="mb-3">
+                                                    <Form.Label>Name</Form.Label>
                                                     <Form.Control
                                                         type="text"
                                                         name="name"
                                                         value={exercise.name}
-                                                        onChange={(e) => handleExerciseChange(index, e)}
-                                                        placeholder="Exercise Name"
+                                                        onChange={(e) => handleNestedChange(e, 'exercises', index, 'name')}
                                                         required
                                                     />
-                                                </InputGroup>
-                                                <InputGroup className="mb-3">
+                                                </Form.Group>
+                                                <Form.Group className="mb-3">
+                                                    <Form.Label>Sets</Form.Label>
                                                     <Form.Control
                                                         type="number"
                                                         name="sets"
                                                         value={exercise.sets}
-                                                        onChange={(e) => handleExerciseChange(index, e)}
-                                                        placeholder="Sets"
-                                                        min="1"
+                                                        onChange={(e) => handleNestedChange(e, 'exercises', index, 'sets')}
                                                         required
                                                     />
-                                                </InputGroup>
-                                                <InputGroup className="mb-3">
+                                                </Form.Group>
+                                                <Form.Group className="mb-3">
+                                                    <Form.Label>Reps</Form.Label>
                                                     <Form.Control
                                                         type="number"
                                                         name="reps"
                                                         value={exercise.reps}
-                                                        onChange={(e) => handleExerciseChange(index, e)}
-                                                        placeholder="Reps"
-                                                        min="1"
+                                                        onChange={(e) => handleNestedChange(e, 'exercises', index, 'reps')}
                                                         required
                                                     />
-                                                </InputGroup>
-                                                <InputGroup className="mb-3">
+                                                </Form.Group>
+                                                <Form.Group className="mb-3">
+                                                    <Form.Label>Weights</Form.Label>
                                                     <Form.Control
                                                         type="number"
                                                         name="weights"
                                                         value={exercise.weights}
-                                                        onChange={(e) => handleExerciseChange(index, e)}
-                                                        placeholder="Weights"
-                                                        min="0"
+                                                        onChange={(e) => handleNestedChange(e, 'exercises', index, 'weights')}
+                                                        required
                                                     />
-                                                </InputGroup>
-                                                <div className="d-flex justify-content-end">
-                                                    <Button variant="danger" className="me-2" onClick={() => removeExercise(index)}>Remove</Button>
-                                                </div>
+                                                </Form.Group>
                                             </div>
                                         ))}
-                                        <Button variant="primary" className="mb-3" onClick={addExercise}>Add Exercise</Button>
                                         <div className="d-flex justify-content-end">
-                                            <Button variant="success" className="me-2" onClick={saveWorkout}>Save</Button>
+                                            <Button variant="success" className="me-2" onClick={saveWorkoutLog}>Save</Button>
                                             <Button variant="secondary" onClick={cancelEditing}>Cancel</Button>
                                         </div>
                                     </Form>
@@ -180,14 +172,33 @@ const WorkoutList = ({ userId }) => {
                             </Card>
                         ) : (
                             <Card>
-                                <Card.Body className="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <Card.Title>{workout.category}</Card.Title>
-                                        <Card.Text>{workout.tags.join(', ')}</Card.Text>
-                                    </div>
-                                    <div>
-                                        <Button variant="primary" className="me-2" onClick={() => startEditing(workout)}>Edit</Button>
-                                        <Button variant="danger" onClick={() => deleteWorkout(workout._id)}>Delete</Button>
+                                <Card.Body>
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <Card.Title>{log.date.split('T')[0]}</Card.Title>
+                                            <Card.Text>Category: {log.category}</Card.Text>
+                                            {expandedLog === log._id && (
+                                                <>
+                                                    <Card.Text>Tags: {log.tags.join(', ')}</Card.Text>
+                                                    {log.exercises.map((exercise, index) => (
+                                                        <div key={exercise._id}>
+                                                            <Card.Text>Exercise {index + 1}:</Card.Text>
+                                                            <Card.Text>Name: {exercise.name}</Card.Text>
+                                                            <Card.Text>Sets: {exercise.sets}</Card.Text>
+                                                            <Card.Text>Reps: {exercise.reps}</Card.Text>
+                                                            <Card.Text>Weights: {exercise.weights}</Card.Text>
+                                                        </div>
+                                                    ))}
+                                                </>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <Button variant="primary" className="me-2" onClick={() => startEditing(log)}>Edit</Button>
+                                            <Button variant="danger" className="me-2" onClick={() => deleteWorkoutLog(log._id)}>Delete</Button>
+                                            <Button variant="info" onClick={() => toggleExpanded(log._id)}>
+                                                {expandedLog === log._id ? 'See Less' : 'See More'}
+                                            </Button>
+                                        </div>
                                     </div>
                                 </Card.Body>
                             </Card>
@@ -199,4 +210,4 @@ const WorkoutList = ({ userId }) => {
     );
 };
 
-export default WorkoutList;
+export default WorkoutLogList;

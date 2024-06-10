@@ -46,7 +46,7 @@ export const createWorkout = async (req, res) => {
 // Get all workouts for a specific user
 export const getAllWorkouts = async (req, res) => {
     try {
-        const userId = req.user_id;
+        const userId = req.body.user_id;
         const workouts = await Workout.find({ user_id: "665612cf2d30a599cfd3b805" });
 
         if (workouts.length === 0) {
@@ -126,6 +126,7 @@ export const updateWorkout = async (req, res) => {
 // Delete a workout by ID and verify user ownership
 export const deleteWorkout = async (req, res) => {
     try {
+        const workoutId = req.params.id;
         const userId = new mongoose.Types.ObjectId(req.body.user_id);
         const workout = await Workout.findOne({ _id: req.params.id, user_id: userId });
 
@@ -138,8 +139,19 @@ export const deleteWorkout = async (req, res) => {
         //     return res.status(400).send({ error: 'Cannot delete a workout for a past date.' });
         // }
 
+        // Find the user associated with the workout
+        const user = await UserModel.findOne({ workout_routines: workoutId });
+
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        // Remove workout ID from user's workout_routines array
+        user.workout_routines.pull(workoutId);
+        await user.save();
+
         // Delete the workout
-        await Workout.deleteOne({ _id: req.params.id, user_id: userId });
+        await Workout.deleteOne({ _id: workoutId, user_id: userId });
 
         // Notification logic for workout deletion
         const message = 'A workout has been deleted!';

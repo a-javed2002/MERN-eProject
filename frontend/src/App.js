@@ -50,6 +50,14 @@ import modalAndAlerts from './components/Extra/modalAndAlerts';
 import UserDetail from './components/Users/UserDetail';
 import Calendar from './components/Calendar';
 import { UserProvider } from './contexts/UserContext';
+import ContactUs from './components/ContactUs';
+import Profile from './components/Profile';
+import UpdateBasicInfo from './components/Users/BasicInfo';
+import ProfilePage from './components/ProfilePage';
+import MyDashboard from './components/Dashboard';
+import SearchPage from './components/search';
+import GalleryComponent from './components/gallery';
+
 const Workouts = () => {
   return (
     <Routes>
@@ -119,6 +127,7 @@ const Users = () => {
       <Route path="/update/:id" element={<UpdateUser />} />
       <Route path="/delete/:id" element={<DeleteUser />} />
       <Route path="/:userId" component={UserDetail} />
+      <Route path='/basic-info' element={<UpdateBasicInfo />}></Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
@@ -154,7 +163,13 @@ function App() {
     <UserProvider>
         <Routes>
           <Route path='/' element={<AuthRoute />}></Route>
+          <Route path='/gallery' element={<GalleryComponent />}></Route>
+          <Route path='/search' element={<SearchPage />}></Route>
+          <Route path='/MyDashboard' element={<MyDashboard />}></Route>
           <Route path='/Calendar' element={<Calendar />}></Route>
+          <Route path='/ProfilePage' element={<ProfilePage />}></Route>
+          <Route path='/profile' element={<Profile />}></Route>
+          <Route path='/contact' element={<ContactUs />}></Route>
           <Route path='/modalAndAlerts' element={<modalAndAlerts />}></Route>
           <Route path='/500' element={<InternalServerError />}></Route>
           <Route path='/404' element={<PageNotFound />}></Route>

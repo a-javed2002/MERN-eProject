@@ -17,6 +17,7 @@ import preferenceRoutes from './routes/preferenceRoutes.js';
 import supportRoutes from './routes/supportRoutes.js';
 import dashboardRoutes  from './routes/dashboardRoutes.js';
 import googleRoutes  from './routes/googleRouter.js';
+import UserModel from './models/UserModel.js';
 
 //configure env
 dotenv.config();
@@ -46,13 +47,32 @@ app.use(morgan("dev"));
 app.use('/api/v1/auth',authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/workouts', workoutRoutes);
-app.use('/api/v1/nutrition-logs', nutritionLogRoutes);
-app.use('/api/v1/progress-logs', progressLogRoutes);
+app.use('/api/v1/nutritions', nutritionLogRoutes);
+app.use('/api/v1/progress', progressLogRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/preferences', preferenceRoutes);
 app.use('/api/v1/support', supportRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
 app.use(googleRoutes);
+
+app.delete('/api/users/:userId/basic-info', async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const user = await UserModel.findByIdAndUpdate(userId, {
+            $unset: { basic_info: 1 }
+        }, { new: true });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json({ message: 'Basic info removed', user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 //rest api
 app.get('/',(req,res)=>{

@@ -13,42 +13,68 @@ const CalendarWorkouts = ({ userId }) => {
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [currentEvent, setCurrentEvent] = useState(null);
-
-    userId = "665612cf2d30a599cfd3b805";
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [nutritionDetails, setNutritionDetails] = useState(null);
+    const [workoutDetails, setWorkoutDetails] = useState(null);
 
     useEffect(() => {
-        const fetchWorkouts = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await axios.get('/workouts', { params: { user_id: userId } });
-                setWorkouts(response.data);
-            } catch (error) {
-                console.error(error);
-                setError('Error fetching workouts. Please try again.');
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchWorkouts();
     }, [userId]);
+
+    const fetchWorkouts = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await axios.get('/workouts', { params: { user_id: "665612cf2d30a599cfd3b805" } });
+            setWorkouts(response.data);
+        } catch (error) {
+            console.error(error);
+            setError('Error fetching workouts. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const events = workouts.map(workout => ({
         title: `${workout.category} - ${workout.tags.join(', ')}`,
         start: new Date(workout.date),
-        backgroundColor: '#0073b7', // Custom background color
-        borderColor: '#0073b7', // Custom border color
+        backgroundColor: '#0073b7',
+        borderColor: '#0073b7',
         id: workout._id,
     }));
 
-    const handleEventDrop = (info) => {
+    const handleEventClick = (info) => {
         setCurrentEvent(info);
         setShowModal(true);
+        const clickedDate = info.dateStr;
+        setSelectedDate(clickedDate);
+        fetchNutritionDetails(clickedDate);
+        fetchWorkoutDetails(clickedDate);
     };
 
-    const handleModalClose = () => {
-        setShowModal(false);
-        setCurrentEvent(null);
+    const fetchNutritionDetails = async (date) => {
+        try {
+            const response = await axios.get('/nutritions', { params: { user_id: userId, date: date } });
+            setNutritionDetails(response.data);
+        } catch (error) {
+            console.error(error);
+            setNutritionDetails(null);
+        }
+    };
+
+    const fetchWorkoutDetails = async (date) => {
+        try {
+            const response = await axios.get('/workouts', { params: { user_id: userId, date: date } });
+            setWorkoutDetails(response.data);
+        } catch (error) {
+            console.error(error);
+            setWorkoutDetails(null);
+        }
+    };
+
+    const handleEventDrop = async (info) => {
+        setCurrentEvent(info);
+        setShowModal(true);
     };
 
     const handleMove = async () => {
@@ -75,7 +101,7 @@ const CalendarWorkouts = ({ userId }) => {
             const newWorkout = {
                 ...workout,
                 date: start,
-                _id: undefined, // Remove the id to create a new workout
+                _id: undefined,
             };
             try {
                 const response = await axios.post('/workouts', newWorkout);
@@ -86,6 +112,11 @@ const CalendarWorkouts = ({ userId }) => {
                 setError('Error replicating workout. Please try again.');
             }
         }
+    };
+
+    const handleModalClose = () => {
+        setShowModal(false);
+        setCurrentEvent(null);
     };
 
     return (
@@ -129,6 +160,7 @@ const CalendarWorkouts = ({ userId }) => {
                                                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                                                 }}
                                                 eventDrop={handleEventDrop}
+                                                dateClick={handleEventClick}
                                             />
                                         )}
                                     </div>
@@ -157,8 +189,41 @@ const CalendarWorkouts = ({ userId }) => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <Modal show={showModal} onHide={handleModalClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <h4>Date: {selectedDate}</h4>
+                    <h5>Nutrition Details:</h5>
+                    {nutritionDetails ? (
+                        <ul>
+                            {nutritionDetails.map((nutrition, index) => (
+                                <li key={index}>
+                                    {nutrition.meal_type}: {nutrition.foods.map(food => food.name).join(', ')}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No nutrition details found for this date.</p>
+                    )}
+                    <h5>Workout Details:</h5>
+                    {workoutDetails ? (
+                        <ul>
+                            {workoutDetails.map((workout, index) => (
+                                <li key={index}>
+                                    {workout.category} - {workout.tags.join(', ')}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No workout details found for this date.</p>
+                    )}
+                </Modal.Body>
+            </Modal>
         </>
     );
 };
 
 export default CalendarWorkouts;
+

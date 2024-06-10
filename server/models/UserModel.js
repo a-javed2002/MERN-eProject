@@ -5,7 +5,12 @@ const fcmTokenSchema = new mongoose.Schema({
     token: { type: String, required: true },
     loginTime: { type: Date, default: Date.now },
     createdAt: { type: Date, default: Date.now }
-});
+}, { timestamps: true });
+
+const imageSchema = new mongoose.Schema({
+    imageUrl: { type: String, required: true },
+    timestamp: { type: Date, default: Date.now }
+}, { timestamps: true });
 
 const userSchema = new mongoose.Schema({
     username: { type: String, unique: true, required: true },
@@ -18,7 +23,8 @@ const userSchema = new mongoose.Schema({
     fcmTokens: [fcmTokenSchema], // Array of FCM tokens and login times
     workout_routines: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workout' }],
     nutrition_logs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'NutritionLog' }],
-    progress_logs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ProgressLog' }]
+    progress_logs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ProgressLog' }],
+    images_by_category: { type: Map, of: [imageSchema] } // Map of categories to array of images
 }, { timestamps: true });
 
 // Add a static method to your schema to find a user by email
