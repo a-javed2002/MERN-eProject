@@ -1,5 +1,5 @@
 import express from 'express';
-import { createUser, getUser, updateUser, deleteUser,getAllUsers,updateBasicInfo,uploadImage,updateProfilePicture,storeImages } from '../controllers/userController.js';
+import { sendEmail,createUser, getUser, updateUser, deleteUser,getAllUsers,updateBasicInfo,uploadImage,updateProfilePicture,storeImages } from '../controllers/userController.js';
 const router = express.Router();
 import upload from '../config/multerConfig.js';
 
@@ -19,6 +19,7 @@ router.put('/:id', updateUser);
 router.delete('/:id', deleteUser);
 
 router.put('/:userId/basic-info', updateBasicInfo);
+router.post('/sendEmail', sendEmail);
 
 router.post('/upload', upload.single('image'), uploadImage);
 router.put('/users/:userId/profile-picture', updateProfilePicture);

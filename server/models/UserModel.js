@@ -15,6 +15,7 @@ const imageSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
     username: { type: String, unique: true, required: true },
     password: { type: String, required: true },
+    role: { type: Number, required: true,default: 0 },
     email: { type: String, unique: true, required: true },
     name: { type: String, required: true },
     profile_picture: { type: String, default: 'default_profile.jpg' },

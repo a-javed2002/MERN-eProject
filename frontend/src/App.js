@@ -57,6 +57,7 @@ import ProfilePage from './components/ProfilePage';
 import MyDashboard from './components/Dashboard';
 import SearchPage from './components/search';
 import GalleryComponent from './components/gallery';
+import ProfileAll from './components/ProfileAll';
 
 const Workouts = () => {
   return (
@@ -169,6 +170,7 @@ function App() {
           <Route path='/Calendar' element={<Calendar />}></Route>
           <Route path='/ProfilePage' element={<ProfilePage />}></Route>
           <Route path='/profile' element={<Profile />}></Route>
+          <Route path="/profile/:userId" element={<ProfileAll />} />
           <Route path='/contact' element={<ContactUs />}></Route>
           <Route path='/modalAndAlerts' element={<modalAndAlerts />}></Route>
           <Route path='/500' element={<InternalServerError />}></Route>

@@ -50,13 +50,15 @@ const Login = () => {
       const fcmToken = "rrr"; // Fetch FCM token
       const response = await axios.post('http://localhost:8080/api/v1/auth/login', { email, password,fcmToken });
       if (response.data.success) {
-        const { token } = response.data;
+        const { token,role } = response.data;
         if (remember) {
           localStorage.setItem('token', token);
-          localStorage.setItem('email', email); // Store email locally
+          localStorage.setItem('email', email);
+          localStorage.setItem('role', role);
         } else {
           sessionStorage.setItem('token', token);
-          sessionStorage.setItem('email', email); // Store email in session
+          sessionStorage.setItem('email', email);
+          sessionStorage.setItem('role', role);
         }
         setUser(response.data);
         console.log(response.data);

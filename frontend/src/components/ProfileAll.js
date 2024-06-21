@@ -4,12 +4,16 @@ import MyAsideBar from './Main/aside';
 import MyHeader from './Main/header';
 import ProfileImageModal from './ProfileImageModal';
 import BasicInfoModal from './BasicInfoModal';
+import { useParams } from 'react-router-dom';
 
-const Profile = (userId) => {
+const ProfileAll = () => {
     const [userData, setUserData] = useState(null);
     const [showProfileImageModal, setShowProfileImageModal] = useState(false);
     const [showBasicInfoModal, setShowBasicInfoModal] = useState(false);
+    let { userId } = useParams();
+    if(userId==null){
         userId = "665612cf2d30a599cfd3b805";
+    }
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -187,4 +191,4 @@ const Profile = (userId) => {
     );
 };
 
-export default Profile;
+export default ProfileAll;

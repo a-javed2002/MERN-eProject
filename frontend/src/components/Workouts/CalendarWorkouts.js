@@ -6,16 +6,19 @@ import axios from '../../api/axiosConfig';
 import { Modal, Button } from 'react-bootstrap';
 import MyHeader from '../Main/header';
 import MyAsideBar from '../Main/aside';
+import { Link } from 'react-router-dom';
 
 const CalendarWorkouts = ({ userId }) => {
     const [workouts, setWorkouts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [showModal, setShowModal] = useState(false);
+    const [showMoveModal, setShowMoveModal] = useState(false);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [currentEvent, setCurrentEvent] = useState(null);
     const [selectedDate, setSelectedDate] = useState(null);
     const [nutritionDetails, setNutritionDetails] = useState(null);
     const [workoutDetails, setWorkoutDetails] = useState(null);
+    const [isChecked, setIsChecked] = useState(false);
 
     useEffect(() => {
         fetchWorkouts();
@@ -44,12 +47,14 @@ const CalendarWorkouts = ({ userId }) => {
     }));
 
     const handleEventClick = (info) => {
-        setCurrentEvent(info);
-        setShowModal(true);
-        const clickedDate = info.dateStr;
-        setSelectedDate(clickedDate);
-        fetchNutritionDetails(clickedDate);
-        fetchWorkoutDetails(clickedDate);
+        if (!isChecked) {
+            setCurrentEvent(info);
+            setShowDetailsModal(true);
+            const clickedDate = info.dateStr;
+            setSelectedDate(clickedDate);
+            fetchNutritionDetails(clickedDate);
+            fetchWorkoutDetails(clickedDate);
+        }
     };
 
     const fetchNutritionDetails = async (date) => {
@@ -72,9 +77,11 @@ const CalendarWorkouts = ({ userId }) => {
         }
     };
 
-    const handleEventDrop = async (info) => {
-        setCurrentEvent(info);
-        setShowModal(true);
+    const handleEventDrop = (info) => {
+        if (isChecked) {
+            setCurrentEvent(info);
+            setShowMoveModal(true);
+        }
     };
 
     const handleMove = async () => {
@@ -115,8 +122,13 @@ const CalendarWorkouts = ({ userId }) => {
     };
 
     const handleModalClose = () => {
-        setShowModal(false);
+        setShowMoveModal(false);
+        setShowDetailsModal(false);
         setCurrentEvent(null);
+    };
+
+    const handleTileClick = () => {
+        setIsChecked(!isChecked);
     };
 
     return (
@@ -141,27 +153,50 @@ const CalendarWorkouts = ({ userId }) => {
                 </section>
                 <section className="content">
                     <div className="container-fluid">
+
+                        <div className="row">
+                            <div className="col-3">
+                                <Link to="/workouts">See In List</Link>
+                            </div>
+                            <div className="col-3">
+                                <Link to="/workouts/create">Add New</Link>
+                            </div>
+                            <div className="col-3">
+                                <div
+                                    className={`tile ${isChecked ? 'checked' : ''}`}
+                                    onClick={handleTileClick}
+                                >
+                                    <input type="checkbox" id="checkbox" hidden checked={isChecked} readOnly />
+                                    <label htmlFor="checkbox" className="tile-label">Grab</label>
+                                </div>
+                            </div>
+                        </div>
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="card card-primary">
                                     <div className="card-body p-0">
+
                                         {loading && <p>Loading...</p>}
                                         {error && <div className="alert alert-danger">{error}</div>}
                                         {!loading && !error && (
-                                            <FullCalendar
-                                                plugins={[dayGridPlugin, interactionPlugin]}
-                                                initialView="dayGridMonth"
-                                                events={events}
-                                                editable={true}
-                                                droppable={true}
-                                                headerToolbar={{
-                                                    left: 'prev,next today',
-                                                    center: 'title',
-                                                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                                                }}
-                                                eventDrop={handleEventDrop}
-                                                dateClick={handleEventClick}
-                                            />
+                                            <div className={`calendar-container ${isChecked ? 'calendar-grab' : 'calendar-pointer'}`}>
+                                                <FullCalendar
+                                                    plugins={[dayGridPlugin, interactionPlugin]}
+                                                    initialView="dayGridMonth"
+                                                    events={events}
+                                                    editable={isChecked}
+                                                    droppable={isChecked}
+                                                    headerToolbar={{
+                                                        left: 'prev,next today',
+                                                        center: 'title',
+                                                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                                                    }}
+                                                    eventDrop={handleEventDrop}
+                                                    dateClick={!isChecked ? handleEventClick : null}
+                                                    eventClick={!isChecked ? handleEventClick : null}
+                                                />
+                                            </div>
+
                                         )}
                                     </div>
                                 </div>
@@ -170,7 +205,7 @@ const CalendarWorkouts = ({ userId }) => {
                     </div>
                 </section>
             </div>
-            <Modal show={showModal} onHide={handleModalClose}>
+            <Modal show={showMoveModal} onHide={handleModalClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Workout Action</Modal.Title>
                 </Modal.Header>
@@ -189,7 +224,7 @@ const CalendarWorkouts = ({ userId }) => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Modal show={showModal} onHide={handleModalClose}>
+            <Modal show={showDetailsModal} onHide={handleModalClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Details</Modal.Title>
                 </Modal.Header>
@@ -226,4 +261,3 @@ const CalendarWorkouts = ({ userId }) => {
 };
 
 export default CalendarWorkouts;
-

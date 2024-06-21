@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../api/axiosConfig';
 import { Spinner, Alert, Button, Card, Form } from 'react-bootstrap';
+import MyHeader from '../Main/header';
+import MyAsideBar from '../Main/aside';
+import { Link } from 'react-router-dom';
 
 const WorkoutLogList = ({ userId }) => {
     const [workoutLogs, setWorkoutLogs] = useState([]);
@@ -77,8 +80,32 @@ const WorkoutLogList = ({ userId }) => {
     };
 
     return (
-        <div className="container mt-5">
-            <h2 className="mb-4">Workout Log List</h2>
+        <>
+        <MyHeader />
+            <MyAsideBar />
+            <div className="content-wrapper">
+                <section className="content-header">
+                    <div className="container-fluid">
+                        <div className="row mb-2">
+                            <div className="col-sm-6">
+                                <h1>Calendar</h1>
+                            </div>
+                            <div className="col-sm-6">
+                                <ol className="breadcrumb float-sm-right">
+                                    <li className="breadcrumb-item"><a href="#">Home</a></li>
+                                    <li className="breadcrumb-item active">Calendar</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section className="content">
+                    <div className="container-fluid">
+                        <div className="row">
+                            <div className="col-md-12">
+
+                            <div className="container mt-5">
+            <h2 className="mb-4">Workout Log List <Link to="/workouts/create">Add New</Link></h2>
             {loading && <Spinner animation="border" />}
             {error && <Alert variant="danger">{error}</Alert>}
             <ul className="list-unstyled">
@@ -207,6 +234,12 @@ const WorkoutLogList = ({ userId }) => {
                 ))}
             </ul>
         </div>
+                            </div>
+                            </div>
+                            </div>
+                            </section>
+                            </div>
+                            </>
     );
 };
 

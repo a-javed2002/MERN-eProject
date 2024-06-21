@@ -1,4 +1,5 @@
 import UserModel from '../models/UserModel.js';
+import nodemailer from 'nodemailer';
 
 // Create a new user
 export const createUser = async (req, res) => {
@@ -15,7 +16,7 @@ export const createUser = async (req, res) => {
 export const getUser = async (req, res) => {
     try {
         const user = await UserModel.findById(req.params.id)
-        .populate('basic_info')
+            .populate('basic_info')
             .populate('workout_routines')
             .populate('progress_logs')
             .populate('nutrition_logs');
@@ -187,5 +188,37 @@ export const storeImages = async (req, res) => {
     } catch (error) {
         console.error('Error storing image data:', error);
         return res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+export const sendEmail = async (req, res) => {
+    const { name, email, subject, message } = req.body;
+
+    // Create a Nodemailer transporter
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail', // Use your email service provider
+        auth: {
+            user: 'abdjav2002@gmail.com',
+            pass: 'julz hrkl vvpr apiu'
+        }
+    });
+
+    try {
+        // Define email options
+        const mailOptions = {
+            from: email, // Sender's email address
+            to: 'abdjav2002@gmail.com', // Receiver's email address
+            subject: subject,
+            text: `From: ${name} <${email}>\nSubject: ${subject}\nMessage: ${message}`
+        };
+
+        // Send email
+        await transporter.sendMail(mailOptions);
+        console.log(`Email sent to abdjav2002@gmail.com: ${subject}`);
+
+        res.status(200).json({ message: 'Email sent successfully' });
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).json({ error: 'Failed to send email' });
     }
 };

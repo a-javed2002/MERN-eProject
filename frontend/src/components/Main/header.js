@@ -67,12 +67,12 @@ const MyHeader = () => {
           <li className="nav-item">
             <a className="nav-link" data-widget="pushmenu" href="#" role="button"><i className="fas fa-bars" /></a>
           </li>
-          <li className="nav-item d-none d-sm-inline-block">
+          {/* <li className="nav-item d-none d-sm-inline-block">
             <a href="index3.html" className="nav-link">Home</a>
           </li>
           <li className="nav-item d-none d-sm-inline-block">
             <Link to="/contact" href="#" className="nav-link">Contact</Link>
-          </li>
+          </li> */}
         </ul>
         {/* Right navbar links */}
         <ul className="navbar-nav ml-auto">

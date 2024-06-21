@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api/axiosConfig';
 import { Container, Typography, ButtonGroup, Button, Grid, Card, CardMedia, Dialog, DialogContent, DialogTitle, DialogActions, TextField, MenuItem, Input, InputLabel, FormControl, FormHelperText } from '@mui/material';
 import { Form, Row, Col, Alert, Spinner } from 'react-bootstrap';
+import MyAsideBar from './Main/aside';
+import MyHeader from './Main/header';
 
 const GalleryComponent = () => {
     const [userData, setUserData] = useState(null);
@@ -14,7 +16,6 @@ const GalleryComponent = () => {
     const [newCategory, setNewCategory] = useState('');
     const [fileError, setFileError] = useState('');
 
-    const [file, setFile] = useState(null);
     const [category, setCategory] = useState('');
     const [message, setMessage] = useState('');
     const [variant, setVariant] = useState('');
@@ -23,7 +24,7 @@ const GalleryComponent = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get('/api/user'); // Adjust the endpoint as per your backend route
+                const response = await axios.get(`/users/${userId}`);
                 setUserData(response.data);
                 setLoading(false);
             } catch (error) {
@@ -72,22 +73,22 @@ const GalleryComponent = () => {
                 return;
             }
         }
-        const imageUrls = Array.from(files).map(file => URL.createObjectURL(file));
+        const imageUrls = Array.from(files).map(selectedImage => URL.createObjectURL(selectedImage));
         setNewImages(imageUrls);
     };
 
     const handleAddImage = async (e) => {
         e.preventDefault();
 
-        if (!file || !category) {
+        if (!selectedImage || !category) {
             setMessage('Please select images and category');
             setVariant('warning');
             return;
         }
 
         const formData = new FormData();
-        for (let i = 0; i < file.length; i++) {
-            formData.append('images', file[i]);
+        for (let i = 0; i < selectedImage.length; i++) {
+            formData.append('images', selectedImage[i]);
         }
 
         try {
@@ -108,7 +109,7 @@ const GalleryComponent = () => {
 
             setMessage('Images uploaded and stored successfully');
             setVariant('success');
-            setFile(null);
+            setSelectedImage(null);
             setCategory('');
         } catch (error) {
             console.error(error);
@@ -213,22 +214,46 @@ const GalleryComponent = () => {
 
 
     return (
-        <Container>
-            <Typography variant="h3" gutterBottom>Gallery</Typography>
-            {renderCategoryButtons()}
-            <Button onClick={handleAddModalOpen}>Add Images</Button>
-            {renderGallery()}
-            <Dialog open={openDialog} onClose={handleCloseDialog}>
-                <DialogTitle>{selectedImage?.category}</DialogTitle>
-                <DialogContent>
-                    <img src={selectedImage?.imageUrl} alt={selectedImage?.category} style={{ maxWidth: '100%' }} />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog}>Close</Button>
-                </DialogActions>
-            </Dialog>
-            {renderAddModal()}
-        </Container>
+        <>
+        <MyHeader />
+            <MyAsideBar />
+        {/* Include your header and sidebar components */}
+        <div className="content-wrapper">
+            <section className="content-header">
+                <div className="container-fluid">
+                    <div className="row mb-2">
+                        <div className="col-sm-6">
+                            <h1>Calendar</h1>
+                        </div>
+                        <div className="col-sm-6">
+                            <ol className="breadcrumb float-sm-right">
+                                <li className="breadcrumb-item"><a href="#">Home</a></li>
+                                <li className="breadcrumb-item active">Calendar</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section className="content">
+                <Container>
+                    <Typography variant="h3" gutterBottom>Gallery</Typography>
+                    {renderCategoryButtons()}
+                    <Button onClick={handleAddModalOpen}>Add Images</Button>
+                    {renderGallery()}
+                    <Dialog open={openDialog} onClose={handleCloseDialog}>
+                        <DialogTitle>{selectedImage?.category}</DialogTitle>
+                        <DialogContent>
+                            <img src={selectedImage?.imageUrl} alt={selectedImage?.category} style={{ maxWidth: '100%' }} />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseDialog}>Close</Button>
+                        </DialogActions>
+                    </Dialog>
+                    {renderAddModal()}
+                </Container>
+            </section>
+        </div>
+    </>
     );
 };
 

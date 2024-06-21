@@ -394,7 +394,7 @@ const MyDashboard = () => {
                                 <CardStyled>
                                     <CardContent>
                                         <Typography variant="h5">
-                                            <FaDumbbell /> Total Weight Lifted
+                                            <FaDumbbell /> Weight Lifted
                                         </Typography>
                                         <Typography variant="h4">
                                             {userData.progress_logs[0]?.weight || 0} kg
